@@ -3,11 +3,10 @@ package com.almc.wwfsolver;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.InputStream;
-import java.util.HashMap;
 import java.util.Vector;
 
 import android.util.Log;
+import android.util.SparseArray;
 
 
     public class WordDict
@@ -16,7 +15,7 @@ import android.util.Log;
         private Vector<String> mDeadWords = new Vector<String>();
      
         //{word length, word list}
-        private HashMap<Integer,Vector<String>> mWordList = new HashMap<Integer,Vector<String>>();
+        private SparseArray<Vector<String>> mWordList = new SparseArray<Vector<String>>();
         private int mMaxWordLength = 0;
 
 
@@ -37,7 +36,7 @@ import android.util.Log;
                     }
 
                     Vector<String> set;
-                    if (!mWordList.containsKey(length))
+                    if (mWordList.get(length) == null)
                     {
                         set = new Vector<String>();
                         mWordList.put(length, set);
@@ -69,7 +68,7 @@ import android.util.Log;
 
         public boolean IsWordInList(String word)
         {
-            if (!mWordList.containsKey(word.length()))
+            if (mWordList.get(word.length()) == null)
             {
                 return false;
             }
@@ -95,7 +94,7 @@ import android.util.Log;
 
             for (int i = testWord.length() + 1; i <= mMaxWordLength; i++)
             {
-                if (mWordList.containsKey(i))
+                if (mWordList.get(i) != null)
                 {
                     Vector<String> list = mWordList.get(i);
                     for (String word : list)
