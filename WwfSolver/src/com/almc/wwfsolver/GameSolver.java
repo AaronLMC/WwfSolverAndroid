@@ -1,5 +1,6 @@
 package com.almc.wwfsolver;
 
+import java.util.HashSet;
 import java.util.Vector;
 
 
@@ -47,7 +48,7 @@ import java.util.Vector;
             {
                 //look for solutions starting at center
                 mFrontEnd.SetSearchStartLocation(GameVals.BOARD_CENTER_LOC, GameVals.BOARD_CENTER_LOC);
-                Vector<WordSolution> words = SolutionSearch(GameVals.BOARD_CENTER_LOC, GameVals.BOARD_CENTER_LOC, 0);
+                HashSet<WordSolution> words = SolutionSearch(GameVals.BOARD_CENTER_LOC, GameVals.BOARD_CENTER_LOC, 0);
                 mFrontEnd.SetLocationColorToDefault(GameVals.BOARD_CENTER_LOC, GameVals.BOARD_CENTER_LOC);
 
                 for (WordSolution w : words)
@@ -77,7 +78,7 @@ import java.util.Vector;
                         }
 
                         mFrontEnd.SetSearchStartLocation(i, j);                        
-                        Vector<WordSolution> words = SolutionSearch(i, j, 0);
+                        HashSet<WordSolution> words = SolutionSearch(i, j, 0);
                         mFrontEnd.SetLocationColorToDefault(i, j);
 
                         for (WordSolution w : words)
@@ -97,7 +98,7 @@ import java.util.Vector;
             return solutions;
         }
 
-        private Vector<WordSolution> SolutionSearch(int x, int y, int depth)
+        private HashSet<WordSolution> SolutionSearch(int x, int y, int depth)
         {
             if (depth > 0 && depth <= 3)
             {
@@ -110,7 +111,7 @@ import java.util.Vector;
                 }
             }
 
-            Vector<WordSolution> solutions = new Vector<WordSolution>();            
+            HashSet<WordSolution> solutions = new HashSet<WordSolution>();            
             
             //cycle through all starting idx so that we exercise all letter combinations
             for (int letterIdx = 0; letterIdx < mAvailableLetters.length; letterIdx++)
@@ -144,7 +145,7 @@ import java.util.Vector;
             return solutions;
         }
 
-        private void _evaluateLetter(char letter, boolean isBlankLetter, int letterIdx, int x, int y, Vector<WordSolution> solutions, int depth)
+        private void _evaluateLetter(char letter, boolean isBlankLetter, int letterIdx, int x, int y, HashSet<WordSolution> solutions, int depth)
         {
             mBoardLetters[x][y] = new CharInfo(letter, isBlankLetter);
 
@@ -153,16 +154,16 @@ import java.util.Vector;
             mUsedLetterIdxs.add(letterIdx);
 
             //get score of current turn
-            WordSet wordSet = GetWordVector();
-            Vector<WordLocation> wordVector = wordSet.GetFullVector();
-            Vector<WordLocation> out_illegalWords = new Vector<WordLocation>();
-            int score = GetWordScore(wordVector, mCurrentWord, out_illegalWords);
+            WordSet wordSet = GetWordHashSet();
+            HashSet<WordLocation> wordHashSet = wordSet.GetFullHashSet();
+            HashSet<WordLocation> out_illegalWords = new HashSet<WordLocation>();
+            int score = GetWordScore(wordHashSet, mCurrentWord, out_illegalWords);
             if (score > 0)
             {
                 //store this move as one that has scores
                 LetterLoc[] letterArr = new LetterLoc[mCurrentWord.size()];
                 mCurrentWord.copyInto(letterArr);
-                WordSolution solution = new WordSolution(letterArr, wordVector, score);
+                WordSolution solution = new WordSolution(letterArr, wordHashSet, score);
                 solutions.add(solution);
             }
 
@@ -190,28 +191,28 @@ import java.util.Vector;
                 int y_next = NextTileUp(x, y);
                 if (y_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
                     solutions.addAll(words);
                 }
 
                 y_next = NextTileDown(x, y);
                 if (y_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
                     solutions.addAll(words);
                 }
 
                 int x_next = NextTileLeft(x, y);
                 if (x_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
                     solutions.addAll(words);
                 }
 
                 x_next = NextTileRight(x, y);
                 if (x_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
                     solutions.addAll(words);
                 }
             }
@@ -221,14 +222,14 @@ import java.util.Vector;
                 int y_next = NextTileUp(x, y);
                 if (y_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
                     solutions.addAll(words);
                 }
 
                 y_next = NextTileDown(x, y);
                 if (y_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x, y_next, depth + 1);
                     solutions.addAll(words);
                 }
             }
@@ -238,14 +239,14 @@ import java.util.Vector;
                 int x_next = NextTileLeft(x, y);
                 if (x_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
                     solutions.addAll(words);
                 }
 
                 x_next = NextTileRight(x, y);
                 if (x_next >= 0)
                 {
-                    Vector<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
+                    HashSet<WordSolution> words = SolutionSearch(x_next, y, depth + 1);
                     solutions.addAll(words);
                 }
             }
@@ -254,7 +255,7 @@ import java.util.Vector;
             clearCandidateLetterFromBoard(x, y, letterIdx, curLetterLoc);
         }
 
-        private boolean AreIncidentalWordsIllegal(Vector<WordLocation> illegalWords, WordSet wordSet)
+        private boolean AreIncidentalWordsIllegal(HashSet<WordLocation> illegalWords, WordSet wordSet)
         {
             for(WordLocation illegalWord : illegalWords)
             {
@@ -270,8 +271,8 @@ import java.util.Vector;
         private void clearCandidateLetterFromBoard(int x, int y, int letterIdx, LetterLoc letterLoc)
         {
             mBoardLetters[x][y] = new CharInfo();
-            mUsedLetterIdxs.remove(letterIdx);
-            mCurrentWord.remove(letterLoc);
+            mUsedLetterIdxs.removeElement(letterIdx);
+            mCurrentWord.removeElement(letterLoc);
         }
 
         private int NextTileUp(int x, int y)
@@ -330,12 +331,12 @@ import java.util.Vector;
             return x_next;
         }
 
-        private int GetWordScore(Vector<WordLocation> wordVector, Vector<LetterLoc> playedTiles, Vector<WordLocation> out_illegalWords)
+        private int GetWordScore(HashSet<WordLocation> wordHashSet, Vector<LetterLoc> playedTiles, HashSet<WordLocation> out_illegalWords)
         {
             int score = 0;
 
             //first check for illegal words
-            for (WordLocation word : wordVector)
+            for (WordLocation word : wordHashSet)
             {                
                 if (!mWordDict.IsWordInList(word.getWordText()))
                 {
@@ -347,7 +348,7 @@ import java.util.Vector;
                 return -1;
             }
 
-            for (WordLocation word : wordVector)
+            for (WordLocation word : wordHashSet)
             {
                 //score the word
                 int wordScore = 0;
@@ -406,7 +407,7 @@ import java.util.Vector;
             return score;
         }
 
-        private WordSet GetWordVector()
+        private WordSet GetWordHashSet()
         { 
             //determine orientation of played tiles
             WordOrientation orientation;
@@ -511,7 +512,7 @@ import java.util.Vector;
                 if (wordLenY > 1)
                 {
                     //get word
-                    Vector<LetterLoc> letters = new Vector<LetterLoc>();
+                	Vector<LetterLoc> letters = new Vector<LetterLoc>();
                     for (int j = minY; j <= maxY; j++)
                     {
                         letters.add(mBoardLetters[letter.X][j].GenLetterLoc(letter.X, j));

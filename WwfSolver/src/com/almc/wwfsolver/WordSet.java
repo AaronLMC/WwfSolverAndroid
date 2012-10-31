@@ -1,16 +1,16 @@
 package com.almc.wwfsolver;
 
-import java.util.Vector;
+import java.util.HashSet;
 
 public class WordSet
 {
     private WordLocation mPrimaryWord = null;
-    private Vector<WordLocation> mIncidentalWords;
+    private HashSet<WordLocation> mIncidentalWords;
     private WordOrientation mOrientation;
 
     public WordSet(WordOrientation orientation)
     {
-        mIncidentalWords = new Vector<WordLocation>();
+        mIncidentalWords = new HashSet<WordLocation>();
         mOrientation = orientation;
     }
 
@@ -29,7 +29,7 @@ public class WordSet
         return mOrientation;
     }
 
-    public Vector<WordLocation> getIncidentalWords()
+    public HashSet<WordLocation> getIncidentalWords()
     {
         return mIncidentalWords;
     }
@@ -39,9 +39,9 @@ public class WordSet
         mIncidentalWords.add(word);
     }
 
-    public Vector<WordLocation> GetFullVector()
+    public HashSet<WordLocation> GetFullHashSet()
     {
-        Vector<WordLocation> fullSet = new Vector<WordLocation>();
+        HashSet<WordLocation> fullSet = new HashSet<WordLocation>();
 
         if (mPrimaryWord != null)
         {

@@ -1,20 +1,120 @@
 package com.almc.wwfsolver;
 
-import android.os.Bundle;
+import java.io.InputStream;
+import java.util.Vector;
+
 import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.Button;
 
-public class WwfSolverActivity extends Activity {
+import com.almc.wwfsolver.ocr.ImgParser;
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_wwf_solver);
-    }
+public class WwfSolverActivity extends Activity
+{
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_wwf_solver, menu);
-        return true;
-    }
+	private GameSolver mGameSolver;
+	private WordDict mWordDict;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState)
+	{
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_wwf_solver);
+		
+		Button goBtn = (Button)findViewById(R.id.btn_Go);
+		
+		goBtn.setOnClickListener(new Button.OnClickListener()
+		{
+			
+			@Override
+			public void onClick(View v)
+			{
+				try
+				{
+					Log.v(WwfConstants.LOG_TAG, "Loading dictionary...");
+					InputStream dictInputStream  = getAssets().open("wwfDict.txt");
+					//mWordDict = new WordDict(dictInputStream);
+					Log.v(WwfConstants.LOG_TAG, "Done loading dictionary");
+				}
+				catch (Exception e)
+				{
+					Log.e(WwfConstants.LOG_TAG, "Exception while trying to open dict file", e);
+				}
+				
+				ImgParser imgParser = new ImgParser("/sdcard/wwf_sample_image.bmp");//get demo board
+				Board board = imgParser.getBoard();
+				
+				mGameSolver = new GameSolver(mSolverInferface, mWordDict, board);
+				Vector<WordSolution> solutions = mGameSolver.GetSolutions();
+				//TODO: sort solutions
+				
+				Log.v(WwfConstants.LOG_TAG, "Solutions:");
+				for(WordSolution s : solutions)
+				{
+					Log.v(WwfConstants.LOG_TAG, "   " + s.toString());
+				}
+				
+			}
+		});
+		
+	}
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		getMenuInflater().inflate(R.menu.activity_wwf_solver, menu);
+		return true;
+	}
+	
+	private FrontEndInterface mSolverInferface = new FrontEndInterface()
+	{
+		
+		@Override
+		public void SetSearchStartLocation(int x, int y)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void SetSearchRecurLocation(int x, int y)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void SetNumWordsEvaluated(int numWords)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void SetNumSolutionsFound(int numSolutions)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void SetLocationColorToDefault(int x, int y)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void SetHighestScoreFound(int maxScore)
+		{
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
+
+
 }

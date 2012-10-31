@@ -1,9 +1,9 @@
 package com.almc.wwfsolver;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.util.Vector;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashSet;
 
 import android.util.Log;
 import android.util.SparseArray;
@@ -11,19 +11,19 @@ import android.util.SparseArray;
 
     public class WordDict
     {
-        private Vector<String> mLiveWords = new Vector<String>();
-        private Vector<String> mDeadWords = new Vector<String>();
+        private HashSet<String> mLiveWords = new HashSet<String>();
+        private HashSet<String> mDeadWords = new HashSet<String>();
      
         //{word length, word list}
-        private SparseArray<Vector<String>> mWordList = new SparseArray<Vector<String>>();
+        private SparseArray<HashSet<String>> mWordList = new SparseArray<HashSet<String>>();
         private int mMaxWordLength = 0;
 
 
-        public WordDict(String dictFile)
+        public WordDict(InputStream dictFileInputStream)
         {
             try
             {
-            	BufferedReader br = new BufferedReader(new FileReader(new File(dictFile)));
+            	BufferedReader br = new BufferedReader(new InputStreamReader(dictFileInputStream));
                 String line;
                 while ((line = br.readLine()) != null)
                 {
@@ -35,10 +35,10 @@ import android.util.SparseArray;
                         continue;
                     }
 
-                    Vector<String> set;
+                    HashSet<String> set;
                     if (mWordList.get(length) == null)
                     {
-                        set = new Vector<String>();
+                        set = new HashSet<String>();
                         mWordList.put(length, set);
                     }
                     else
@@ -46,10 +46,10 @@ import android.util.SparseArray;
                         set = mWordList.get(length);
                     }
 
-                    if (set.contains(word))
-                    {
-                        Log.e(WwfConstants.LOG_TAG, "Duplicate word in dictionary: " + word);
-                    }
+//                    if (set.contains(word))
+//                    {
+//                        Log.e(WwfConstants.LOG_TAG, "Duplicate word in dictionary: " + word);
+//                    }
 
                     set.add(word);
 
@@ -81,7 +81,7 @@ import android.util.SparseArray;
         /// </summary>
         public boolean IsDeadWord(String testWord)
         {
-            //Vector<String> candidates = new Vector<String>();
+            //HashSet<String> candidates = new HashSet<String>();
 
             if (mDeadWords.contains(testWord))
             {
@@ -96,7 +96,7 @@ import android.util.SparseArray;
             {
                 if (mWordList.get(i) != null)
                 {
-                    Vector<String> list = mWordList.get(i);
+                    HashSet<String> list = mWordList.get(i);
                     for (String word : list)
                     {
                         if (word.contains(testWord))

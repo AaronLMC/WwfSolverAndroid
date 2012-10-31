@@ -1,16 +1,16 @@
 package com.almc.wwfsolver;
 
-import java.util.Vector;
+import java.util.HashSet;
 
 public class WordSolution implements Comparable<WordSolution>
 {
     private LetterLoc[] mLetters;
-    private Vector<WordLocation> mLegalWords;
+    private HashSet<WordLocation> mLegalWords;
     private int mScore;
 
-    public WordSolution(LetterLoc[] letterVector, Vector<WordLocation> legalWords, int score)
+    public WordSolution(LetterLoc[] letterHashSet, HashSet<WordLocation> legalWords, int score)
     {
-        mLetters = letterVector;
+        mLetters = letterHashSet;
         mLegalWords = legalWords;
         mScore = score;            
     }
@@ -20,7 +20,7 @@ public class WordSolution implements Comparable<WordSolution>
         return mLetters;
     }
 
-    public Vector<WordLocation> getLegalWords()
+    public HashSet<WordLocation> getLegalWords()
     {
         return mLegalWords;
     }
@@ -30,26 +30,28 @@ public class WordSolution implements Comparable<WordSolution>
         return mScore;
     }
 
-    public String getWordVector()
+    public String getWordHashSet()
     {
-        String wordVector = "";
-        for (int i = 0; i < mLegalWords.size(); i++)
+        String wordHashSet = "";
+        int count = 0;
+        for (WordLocation word : mLegalWords)
         {
-            wordVector += mLegalWords.get(i);
+            wordHashSet += word;
+            count++;
 
-            if (i < mLegalWords.size() - 1)
+            if (count < mLegalWords.size() - 1)
             {
-                wordVector += ", ";
+                wordHashSet += ", ";
             }
         }
-        return wordVector;
+        return wordHashSet;
     }
 
     @Override
     public String toString()
     {
-        String wordVector = getWordVector();
-        return String.format("Score = {0}, Words = {1}, NumTiles = {2}", mScore, wordVector, mLetters.length);
+        String wordHashSet = getWordHashSet();
+        return String.format("Score = %d, Words = %s, NumTiles = %d", mScore, wordHashSet, mLetters.length);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class WordSolution implements Comparable<WordSolution>
             }
             
             //Letters might be in a different order, but should be considered the same solution
-            Vector<LetterLoc> otherLetters = new Vector<LetterLoc>();
+            HashSet<LetterLoc> otherLetters = new HashSet<LetterLoc>();
             for (LetterLoc otherLetter : otherObj.mLetters) otherLetters.add(otherLetter);
             for (LetterLoc letter : mLetters)
             {
