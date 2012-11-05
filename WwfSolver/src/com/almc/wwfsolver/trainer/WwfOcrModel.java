@@ -22,7 +22,18 @@ public class WwfOcrModel
 			return;
 		}
 		
-		m_modelMap.put(vector, c);
+		if (!m_modelMap.containsKey(vector))
+		{
+			m_modelMap.put(vector, c);
+		}
+		else
+		{
+			char existingC = m_modelMap.get(vector);
+			if (existingC != c)
+			{
+				System.err.println("Collision of vectors between two different chars");
+			}
+		}
 	}
 	
 	/**

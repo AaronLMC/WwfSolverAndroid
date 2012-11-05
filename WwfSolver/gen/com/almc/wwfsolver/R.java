@@ -16,7 +16,8 @@ public final class R {
     }
     public static final class id {
         public static final int btn_Go=0x7f070000;
-        public static final int menu_settings=0x7f070001;
+        public static final int btn_Train=0x7f070001;
+        public static final int menu_settings=0x7f070002;
     }
     public static final class layout {
         public static final int activity_wwf_solver=0x7f030000;

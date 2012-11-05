@@ -12,6 +12,7 @@ import android.widget.Button;
 
 import com.almc.wwfsolver.ocr.ImgParser;
 import com.almc.wwfsolver.trainer.WwfOcrModel;
+import com.almc.wwfsolver.trainer.WwfOcrModelTrainier;
 
 public class WwfSolverActivity extends Activity
 {
@@ -25,6 +26,22 @@ public class WwfSolverActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_wwf_solver);
+		
+		Button trainBtn = (Button)findViewById(R.id.btn_Train);
+		
+		trainBtn.setOnClickListener(new Button.OnClickListener()
+		{
+			
+			@Override
+			public void onClick(View v)
+			{
+				new WwfOcrModelTrainier(
+						"/sdcard/wwf_sample_image.bmp",
+						"/sdcard/wwf_sample_image_anno.txt",
+						"/sdcard/wwf_models.txt");
+			}
+		});
+		
 		
 		Button goBtn = (Button)findViewById(R.id.btn_Go);
 		

@@ -62,6 +62,12 @@ public class FeatureVector
 			m_isBlankLetter = true;
 			return;
 		}
+		else if (numLetterPixels == 0 && numLetterBackgroundPixels == 0)
+		{
+			//we saw an empty board tile
+			m_letterNotFound = true;
+			return;
+		}
 		
 		//
 		//get overall ratio between width and height of letter pixels
@@ -188,6 +194,25 @@ public class FeatureVector
 		{
 			return super.equals(obj);
 		}
+	}
+	
+	@Override
+	public int hashCode()
+	{
+		if (m_letterNotFound) return -1;
+		if (m_isBlankLetter) return -2;
+		
+		int hash = m_letterRatio * 42;
+				
+		for(int i = 0; i < NUM_BINS; i++)
+		{
+			for (int j = 0; j < NUM_BINS; j++)
+			{
+				hash += m_binRatios[i][j] * i * j;
+			}
+		}
+		
+		return hash;
 	}
 	
 	public String serialize()
