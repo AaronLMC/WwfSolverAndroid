@@ -11,12 +11,14 @@ import android.view.View;
 import android.widget.Button;
 
 import com.almc.wwfsolver.ocr.ImgParser;
+import com.almc.wwfsolver.trainer.WwfOcrModel;
 
 public class WwfSolverActivity extends Activity
 {
 
 	private GameSolver mGameSolver;
 	private WordDict mWordDict;
+	private WwfOcrModel mModels;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
@@ -44,7 +46,9 @@ public class WwfSolverActivity extends Activity
 					Log.e(WwfConstants.LOG_TAG, "Exception while trying to open dict file", e);
 				}
 				
-				ImgParser imgParser = new ImgParser("/sdcard/wwf_sample_image.bmp");//get demo board
+				mModels = WwfOcrModel.deserialize("models.txt");
+				
+				ImgParser imgParser = new ImgParser("/sdcard/wwf_sample_image.bmp", mModels);//get demo board
 				Board board = imgParser.getBoard();
 				
 				mGameSolver = new GameSolver(mSolverInferface, mWordDict, board);
