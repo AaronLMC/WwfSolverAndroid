@@ -63,6 +63,10 @@ public class FeatureVector
 			return;
 		}
 		
+		//
+		//get overall ratio between width and height of letter pixels
+		//
+		
 		//get start/stop indices for row/col buckets
 		int rowStart = -1;
 		int rowEnd = -1;		
@@ -96,21 +100,19 @@ public class FeatureVector
 			return;
 		}
 		
-		//divide letter into bins and fill in vectors
 		int rowSize = rowEnd - rowStart;
-		int colSize = colEnd - colStart;
-//		int rowSize = imgSize;
-//		rowStart = 0;
-//		int colSize = imgSize;
-//		colStart = 0;
+		int colSize = colEnd - colStart;		
 		
-		int rowBinSize = rowSize / NUM_BINS;
-		int colBinSize = colSize / NUM_BINS;
+		double letterRatioDbl = (double)rowSize/colSize;
+		m_letterRatio = (int)(letterRatioDbl * DBL_TO_INT_MULTIPLIER);
 		
-		if (rowBinSize == 0
-			|| colBinSize == 0)
+		//
+		// Get ratios for bins
+		//
+		int binSize = imgSize / NUM_BINS;
+		if (binSize == 0)
 		{
-			System.err.println("Bin size too small; letter bin has zero size");
+			System.err.println("Too many bins - size of each bin is 0");
 			m_letterNotFound = true;
 			return;
 		}
@@ -121,12 +123,10 @@ public class FeatureVector
 			{
 				double binRatioSum = 0;
 				
-				for(int i = 0; i < rowBinSize; i++)
+				for(int k = 0; k < binSize; k++)
 				{
-					for (int j = 0; j < colBinSize; j++)
-					{
-						int x = j + jBin * colBinSize + colStart;
-						int y = i + iBin * rowBinSize + rowStart;
+						int x = k + jBin * binSize;
+						int y = k + iBin * binSize;
 						
 						double ratio;
 						if (colBuckets[x] != 0)
@@ -140,19 +140,15 @@ public class FeatureVector
 						
 						binRatioSum += ratio;
 						
-					}
 				}
 				
-				int binArea = rowBinSize * colBinSize;
-				double binRatioAvg = binRatioSum / binArea;
+				double binRatioAvg = binRatioSum / binSize;
 				
 				m_binRatios[iBin][jBin] = (int)(binRatioAvg * DBL_TO_INT_MULTIPLIER);
 			}
 		}
 		
-		//get overall ratio between width and height of letter pixels
-		double letterRatioDbl = (double)rowSize/colSize;
-		m_letterRatio = (int)(letterRatioDbl * DBL_TO_INT_MULTIPLIER);		
+		
 	}
 	
 	public boolean isUnknownLetter()
